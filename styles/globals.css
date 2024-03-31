@@ -135,4 +135,20 @@ form{
     .wrapper input{
         width: 250px;
     }
+    .details h5{
+        font-size: 1.2rem;;
+    }
+    .details p{
+        font-size: 0.9rem;
+    }
+    .humidity img,
+.wind img{
+    height: 45px;
+}
+.cityName{
+    font-size: 2.2rem;
+}
+.temp{
+    font-size: 2.9rem;
+}
 }
