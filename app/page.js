@@ -1,95 +1,91 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { useState } from "react";
+import $ from "jquery";
+import { CiSearch } from "react-icons/ci";
 
 export default function Home() {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (input.trim() === "") {
+      setError("Please enter a city name");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } else {
+      setError("");
+      getDetails(input);
+    }
+  };
+
+  const getDetails = async (cityName) => {
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${process.env.NEXT_PUBLIC_API_KEY}&units=metric`
+      );
+      if (!res.ok) {
+        throw new Error("City not found");
+      }
+      const api_key = await res.json();
+      $(".container").addClass("active");
+      $(".temp span").text(Math.round(api_key.main.temp));
+      $(".tempImg").attr("src", `./${api_key.weather[0].main}.png`);
+      $(".cityName").text(api_key.name);
+      $(".humidityRate").text(`${api_key.main.humidity} %`);
+      $(".windRate").text(`${api_key.wind.speed} km/h`);
+      setInput("");
+    } catch (error) {
+      setError("Enter a valid city name");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    }
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="wrapper">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="input"
+          placeholder="Enter City name"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button type="submit" className="submit">
+          <CiSearch size={20} />
+        </button>
+      </form>
+      <div className="error">{error}</div>
+      <div className="container">
+        <img src="" alt="" className="tempImg" />
+        <h2 className="temp">
+          <span></span>°C
+        </h2>
+        <h3 className="cityName"></h3>
+        <div className="extra">
+          <div className="humidity">
+            <div className="img">
+              <img src="/Smoke.png" alt="" />
+            </div>
+            <div className="details">
+              <h5 className="humidityRate"></h5>
+              <p>Humidity</p>
+            </div>
+          </div>
+          <div className="wind">
+            <div className="img">
+              <img src="/wind.png" alt="" />
+            </div>
+            <div className="details">
+              <h5 className="windRate"></h5>
+              <p>Wind Speed</p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
