@@ -47,7 +47,7 @@ form{
 
 .wrapper input{
     height: 50px;
-    width: 350px;
+    width: 300px;
     padding:  10px 20px;
     font-size: 1.3rem;
     border-radius: 30px;
@@ -126,4 +126,13 @@ form{
     font-size: 1.2rem;
     color: whitesmoke;
     font-family: 'Poppins', sans-serif;
+}
+
+@media all and (max-width: 450px){
+    .wrapper{
+        padding: 20px 10px;
+    }
+    .wrapper input{
+        width: 250px;
+    }
 }
